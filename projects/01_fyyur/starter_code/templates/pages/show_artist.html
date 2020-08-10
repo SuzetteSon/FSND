@@ -71,6 +71,19 @@
 		{% endfor %}
 	</div>
 </section>
+<section>
+	<div class="col-sm-12">
+		</button>
+		<a href="/artists/{{ artist.id }}/edit">
+			<button
+			class="btn"
+				id="edit_artist"
+				data-id="{{ artist.id }}">
+				Edit Artist
+			</button>
+		</a>
+	</div>
+</section>
 
 {% endblock %}
 

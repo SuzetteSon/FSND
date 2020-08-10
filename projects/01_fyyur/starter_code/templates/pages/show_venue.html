@@ -83,12 +83,14 @@
 			data-id="{{ venue.id }}">
 			Delete Venue
 		</button>
-		<button
-		class="btn"
-			id="edit_venue"
-			data-id="{{ venue.id }}">
-			Edit Venue
-		</button>
+		<a href="/venues/{{ venue.id }}/edit">
+			<button
+			class="btn"
+				id="edit_venue"
+				data-id="{{ venue.id }}">
+				Edit Venue
+			</button>
+		</a>
 	</div>
 </section>
 <script>
