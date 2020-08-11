@@ -311,6 +311,7 @@ def show_venue(venue_id):
     "website": venue.website,
     "facebook_link": venue.facebook_link,
     "seeking_talent": venue.seeking_talent,
+    "seeking_description": venue.seeking_description,
     "image_link": venue.image_link,
     "upcoming_shows": upcoming_shows,
     "past_shows": past_shows,
@@ -356,11 +357,11 @@ def create_venue_submission():
     #print('die value van die seeking talent checkbox is:' + seeking)
     seeking_description = request.form['seeking_description']
     venue = Venue(name=name, city=city, state=state, address=address, phone=phone, genres=genres, website=website, facebook_link=facebook, image_link=image, seeking_talent=seeking_talent, seeking_description=seeking_description)
-    print(venue)
+    
     db.session.add(venue)
     db.session.commit()
     flash('Venue ' + request.form['name'] + ' was successfully listed!')
-    print(request.form, venue)
+    print(request.form)
   
   # on successful db insert, flash success
   # TODO: on unsuccessful db insert, flash an error instead.
@@ -573,6 +574,7 @@ def show_artist(artist_id):
     "website": artist.website,
     "facebook_link": artist.facebook_link,
     "seeking_venue": artist.seeking_venue,
+    "seeking_description": artist.seeking_description,
     "image_link": artist.image_link,
     "upcoming_shows": upcoming_shows,
     "past_shows": past_shows,
@@ -634,8 +636,9 @@ def edit_artist_submission(artist_id):
     artist.genres = request.form.getlist('genres')
     artist.facebook = request.form['facebook_link']
     artist.image = request.form['image_link']
-    #seeking = request.form['seeking_venue']
-    artist.description = request.form['seeking_description']
+    artist.seeking_venue = True if 'seeking_venue' in request.form else False 
+    #artist.seeking_venue = request.form['seeking_venue']
+    artist.seeking_description = request.form['seeking_description']
   
     db.session.commit()
     flash('Artist ' + request.form['name'] + ' was successfully listed!')
@@ -697,8 +700,9 @@ def edit_venue_submission(venue_id):
     venue.genres = request.form.getlist('genres')
     venue.facebook = request.form['facebook_link']
     venue.image = request.form['image_link']
-    #seeking = request.form['seeking_talent']
-    venue.description = request.form['seeking_description']
+    venue.seeking_talent = True if 'seeking_talent' in request.form else False 
+    #venue.seeking_talent = request.form['seeking_talent']
+    venue.seeking_description = request.form['seeking_description']
   
     db.session.commit()
     flash('Venue ' + request.form['name'] + ' was successfully listed!')
@@ -730,9 +734,9 @@ def create_artist_submission():
     website = request.form['website']
     facebook = request.form['facebook_link']
     image = request.form['image_link']
-    #seeking = request.form['seeking_venue']
-    description = request.form['seeking_description']
-    artist = Artist(name=name, city=city, state=state, phone=phone, genres=genres, image_link=image, website=website, facebook_link=facebook,  seeking_description=description)
+    seeking_venue = True if 'seeking_venue' in request.form else False 
+    seeking_description = request.form['seeking_description']
+    artist = Artist(name=name, city=city, state=state, phone=phone, genres=genres, image_link=image, website=website, facebook_link=facebook, seeking_venue=seeking_venue, seeking_description=seeking_description)
     print(request.form, artist)
     db.session.add(artist)
     db.session.commit()
