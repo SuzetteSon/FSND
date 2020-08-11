@@ -77,12 +77,14 @@
 </section>
 <section>
 	<div class="col-sm-12">
+		
 		<button
 		class="btn"
-			id="delete_venue"
+			id="delete"
 			data-id="{{ venue.id }}">
 			Delete Venue
 		</button>
+		
 		<a href="/venues/{{ venue.id }}/edit">
 			<button
 			class="btn"
@@ -94,12 +96,13 @@
 	</div>
 </section>
 <script>
-	const deleteButton = document.getElementById('delete_venue')
-	deleteButton.onclick = function (e) {
-		const venue_id = e.target.dataset['id']
-		fetch('/venues/' + venue_id, {
+	const btn = document.getElementById('delete')
+	btn.onclick = function (e) {
+		const id = e.target.dataset['id']
+		fetch('/venues/' + id, {
 			method: 'DELETE'
 		})
+		.then(() => window.location = '/venues')
 	}
 </script>
 {% endblock %}

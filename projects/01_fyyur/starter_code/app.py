@@ -45,7 +45,7 @@ class Venue(db.Model):
   website = db.Column(db.String(120))
   image_link = db.Column(db.String(120))
   facebook_link = db.Column(db.String(120))
-  seeking_talent = db.Column(db.Boolean, nullable=False, default=False)
+  seeking_talent = db.Column(db.Boolean)
   seeking_description = db.Column(db.String(500))
   shows = db.relationship('Show', backref="venue", lazy=True)
 
@@ -347,9 +347,16 @@ def create_venue_submission():
     genres = request.form.getlist('genres')
     facebook = request.form['facebook_link']
     image = request.form['image_link']
-    #seeking = request.form['seeking_talent']
-    description = request.form['seeking_description']
-    venue = Venue(name=name, city=city, state=state, address=address, phone=phone, genres=genres, website=website, facebook_link=facebook, image_link=image, seeking_description=description)
+    #seekingT = request.form['seeking_talent']
+    #seeking_talent = False
+    seeking_talent = True if 'seeking_talent' in request.form else False 
+    #seeking_talent = True
+
+
+    #print('die value van die seeking talent checkbox is:' + seeking)
+    seeking_description = request.form['seeking_description']
+    venue = Venue(name=name, city=city, state=state, address=address, phone=phone, genres=genres, website=website, facebook_link=facebook, image_link=image, seeking_talent=seeking_talent, seeking_description=seeking_description)
+    print(venue)
     db.session.add(venue)
     db.session.commit()
     flash('Venue ' + request.form['name'] + ' was successfully listed!')
@@ -362,13 +369,14 @@ def create_venue_submission():
 
   except:
     error = True
+    flash('An error occurred. Venue ' + request.form['name'] + ' could not be listed.')
     db.session.rollback()
+    print(sys.exc_info())
   finally:
     db.session.close()
     return render_template('pages/home.html')
   if error:
     abort (400)
-    flash('An error occurred. Venue ' + request.form['name'] + ' could not be listed.')
   
     
     
@@ -378,20 +386,26 @@ def create_venue_submission():
 def delete_venue(venue_id):
   # TODO: Complete this endpoint for taking a venue_id, and using
   # SQLAlchemy ORM to delete a record. Handle cases where the session commit could fail.
-  # error = False
+  
+  error = False
+
   try:
-    venue = Venue.query.get(venue_id)
-    db.session.delete(venue)
+    Venue.query.filter_by(id=venue_id).delete()
     db.session.commit()
-    flash('Venue was successfully deleted.')
-  # except:
-  #   error = True
-  #   db.session.rollback()
+    print('flash: ' + venue_id)
+    flash('Venue ' + venue_id + ' was deleted')
+    
+  except:
+    error = True
+    db.session.rollback()
   finally:
     db.session.close()
     print('closed')
-  return render_template('pages/venues.html')
-  print('returned')
+    
+
+  return redirect(url_for('index'))
+
+  
   # if error:
   #   flash('Venue could not be deleted. Try again later.')
   # else:
