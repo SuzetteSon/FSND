@@ -67,27 +67,182 @@ One note before you delve into your tasks: for each endpoint you are expected to
 9. Create error handlers for all expected errors including 400, 404, 422 and 500. 
 
 REVIEW_COMMENT
-```
+
 This README is missing documentation of your endpoints. Below is an example for your endpoint to get all categories. Please use it as a reference for creating your documentation and resubmit your code. 
 
 Endpoints
 GET '/categories'
-GET ...
-POST ...
-DELETE ...
+GET '/questions'
+DELETE '/questions/<id>'
+POST '/questions/<id>'
+POST '/questions/search'
+GET '/categories/<id>/questions'
+POST '/quizzes'
 
 GET '/categories'
 - Fetches a dictionary of categories in which the keys are the ids and the value is the corresponding string of the category
 - Request Arguments: None
 - Returns: An object with a single key, categories, that contains a object of id: category_string key:value pairs. 
-{'1' : "Science",
-'2' : "Art",
-'3' : "Geography",
-'4' : "History",
-'5' : "Entertainment",
-'6' : "Sports"}
+```
+{
+    1: 'Science', 
+    2: 'Art', 
+    3: 'Geography', 
+    4: 'History', 
+    5: 'Entertainment', 
+    6: 'Sports'
+}
 
 ```
+
+GET '/questions'
+
+- Fetches a tupel with dictionaries of questions
+- Request Arguments: None
+- Returns: A tupel with objects with key:value pairs for id, the question, the answer, the category and difficulty.
+
+```
+[
+    {
+        'id': 2, 'question': 'What movie earned Tom Hanks his third straight Oscar nomination, in 1996?', 
+        'answer': 'Apollo 13', 
+        'category': 5, 
+        'difficulty': 4
+    }, 
+    {
+        'id': 4, 'question': 'What actor did author Anne Rice first denounce, then praise in the role of her beloved Lestat?', 
+        'answer': 'Tom Cruise', 
+        'category': 5, 
+        'difficulty': 4
+    },
+    ... ]
+
+```
+
+DELETE '/questions/<id>'
+
+- Fetches a tupel with dictionaries of questions 
+- Request Arguments: the question ID to be deleted acquired from the front-end when the delete button is clicked
+- Returns: A tupel with objects with key:value pairs without the deleted question object
+
+```
+[
+    {
+        'id': 2, 'question': 'What movie earned Tom Hanks his third straight Oscar nomination, in 1996?', 
+        'answer': 'Apollo 13', 
+        'category': 5, 
+        'difficulty': 4
+    }, 
+    {
+        'id': 4, 'question': 'What actor did author Anne Rice first denounce, then praise in the role of her beloved Lestat?', 
+        'answer': 'Tom Cruise', 
+        'category': 5, 
+        'difficulty': 4
+    }, 
+    {
+        'id': 5, 'question': "Whose autobiography is entitled 'I Know Why the Caged Bird Sings'?", 
+        'answer': 'Maya Angelou', 
+        'category': 4, 
+        'difficulty': 2
+    },  
+    ... ]
+
+```
+POST '/questions/<id>'
+
+- Posts a tupel with dictionaries of questions
+- Request Arguments: an object with the new question, answer, difficulty and category as acquired from the front-end
+- Returns: A tupel with objects with key:value pairs for all the questions including the new question added
+```
+[
+    {
+        'id': 2, 'question': 'What movie earned Tom Hanks his third straight Oscar nomination, in 1996?', 
+        'answer': 'Apollo 13', 
+        'category': 5, 
+        'difficulty': 4
+    }, 
+    {
+        'id': 4, 'question': 'What actor did author Anne Rice first denounce, then praise in the role of her beloved Lestat?', 
+        'answer': 'Tom Cruise', 
+        'category': 5, 
+        'difficulty': 4
+    }, 
+    * new question ... *
+    {
+        'id': 5, 'question': "Whose autobiography is entitled 'I Know Why the Caged Bird Sings'?", 
+        'answer': 'Maya Angelou', 
+        'category': 4, 
+        'difficulty': 2
+    }, 
+    ... ]
+
+```
+
+POST '/questions/search'
+
+- Posts a tupel with dictionaries of questions
+- Request Arguments: a searchTerm acquired from the FE
+- Returns: A tupel with objects with key:value pairs for all the questions in which the searchTerm can be found
+
+```
+searchTerm = "Africa"
+[
+    {
+        'id': 13, 'question': 'What is the largest lake in Africa?', 
+        'answer': 'Lake Victoria', 
+        'category': 3, 
+        'difficulty': 2
+    }, 
+    {
+        'id': 37, 'question': 'How many countries are in Africa?', 
+        'answer': '54', 
+        'category': 3, 
+        'difficulty': 4
+    }
+]
+```
+
+GET '/categories/<id>/questions'
+
+- Posts a tupel with dictionaries of questions
+- Request Arguments: the catergory ID as acquired by the FE when a category is clicked on
+- Returns: A tupel with objects with key:value pairs for all the questions in the category clicked on
+
+```
+category = Sports
+[
+    {
+        'id': 10, 'question': 'Which is the only team to play in every soccer World Cup tournament?', 
+        'answer': 'Brazil', 
+        'category': 6, 
+        'difficulty': 3
+    }, 
+    {
+        'id': 11, 'question': 'Which country won the first ever soccer World Cup in 1930?', 
+        'answer': 'Uruguay', 
+        'category': 6, 
+        'difficulty': 4
+    }
+]
+```
+
+POST '/quizzes'
+
+- Posts a tupel with dictionaries of questions
+- Request Arguments: the quiz category and the previous questions asked
+- Returns: An object with key:value pairs for a random question in in the quiz, not previousely asked.
+
+```
+category = Art
+{
+    'id': 16, 
+    'question': 'Which Dutch graphic artist–initials M C was a creator of optical illusions?', 
+    'answer': 'Escher', 
+    'category': 2, 
+    'difficulty': 1
+}
+```
+
 
 
 ## Testing

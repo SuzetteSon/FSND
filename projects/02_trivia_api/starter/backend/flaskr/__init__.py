@@ -164,7 +164,7 @@ def create_app(test_config=None):
       categories = {}
       for category in all_categories:
         categories[category.id] = category.type
-      
+
       return jsonify({
         'success': True,
         'questions': current_questions,
@@ -185,6 +185,25 @@ def create_app(test_config=None):
   only question that include that string within their question. 
   Try using the word "title" to start. 
   '''
+  @app.route('/questions/search', methods=['POST'])
+  def search_questions():
+
+    body = request.get_json()
+    searchTerm = body.get('searchTerm', None)
+    
+    selection = Question.query.filter(Question.question.ilike(f'%{searchTerm}%')).all()
+    current_questions = paginate_questions(request, selection)
+
+    if selection is None:
+      abort(404)
+
+    return jsonify({
+      'success': True,
+      'questions': current_questions,
+      'totalQuestions': len(selection)
+      })
+
+
 
   '''
   @TODO: 
@@ -194,6 +213,32 @@ def create_app(test_config=None):
   categories in the left column will cause only questions of that 
   category to be shown. 
   '''
+
+  @app.route('/categories/<int:category_id>/questions')
+  def retrieve_category(category_id):
+    # body = request.get_json()
+
+    # search_category = Category.query.all().join(Question).all()
+    # print(search_category)
+    
+    
+    selection = Question.query.order_by(Question.id).all()
+
+    show_questions = []
+
+    for question in selection:
+      if category_id == question.category:
+        show_questions.append(question.format())
+    
+    if len(show_questions) == 0:
+      abort(404)
+
+    return jsonify({
+      'success': True,
+      'questions': show_questions,
+      'total_questions': len(Question.query.all())
+      })
+
 
 
   '''
@@ -206,13 +251,84 @@ def create_app(test_config=None):
   TEST: In the "Play" tab, after a user selects "All" or a category,
   one question at a time is displayed, the user is allowed to answer
   and shown whether they were correct or not. 
+
+  Create a POST endpoint to get questions to play the quiz. 
+  This endpoint should take category and previous question parameters 
+  and return a random questions within the given category, 
+  if provided, and that is not one of the previous questions. 
   '''
+  @app.route('/quizzes', methods=['POST'])
+  def retrieve_quiz():
+
+    body = request.get_json()
+
+    quiz_category = body.get('quiz_category')
+    previous_questions = body.get('previous_questions')
+
+    print('BODY: ')
+    print(body)
+
+    if quiz_category['type'] == 'click':
+      remaining_questions = Question.query.filter(
+        Question.id.notin_((previous_questions))).all()
+    else:
+      remaining_questions = Question.query.filter_by(category=quiz_category['id']).filter(Question.id.notin_((previous_questions))).all()
+
+    if len(remaining_questions) > 0:
+      new_question = remaining_questions[random.randrange(0, len(remaining_questions))].format()
+      print('new_question: ')
+      print(new_question)
+    else:
+      None
+
+    if quiz_category is None or previous_questions is None:
+      abort(404)
+
+    return jsonify({
+      'success': True,
+      'currentQuestion': new_question,
+      'previousQuestions': previous_questions,
+    })
+
+    # this.setState({
+    #       showAnswer: false,
+    #       previousQuestions: previousQuestions,
+    #       currentQuestion: result.question,
+    #       guess: '',
+    #       forceEnd: result.question ? false : true
+    #     })
+
+
 
   '''
   @TODO: 
   Create error handlers for all expected errors 
   including 404 and 422. 
   '''
+
+  @app.errorhandler(404)
+  def not_found(error):
+    return jsonify({
+      'success': False,
+      'error': False,
+      'message': 'No matching request found.'
+    }), 404
+
+  @app.errorhandler(422)
+  def unprocessable(error):
+    return jsonify({
+      'success': False,
+      'error': False,
+      'message': 'Unable to process the contained instructions.'
+    }), 422
+
+  @app.errorhandler(400)
+  def bad_request(error):
+    return jsonify({
+      'success': False,
+      'error': False,
+      'message': 'Request not understood due to malformed syntax.'
+    }), 400
   
   return app
 
