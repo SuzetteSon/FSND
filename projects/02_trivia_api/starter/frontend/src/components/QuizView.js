@@ -61,13 +61,14 @@ class QuizView extends Component {
       },
       crossDomain: true,
       success: (result) => {
+        console.log(result)
         this.setState({
           showAnswer: false,
           previousQuestions: previousQuestions,
           currentQuestion: result.question,
           guess: '',
           forceEnd: result.question ? false : true
-        })
+        });
         return;
       },
       error: (error) => {
